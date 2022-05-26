@@ -1,5 +1,9 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Shopping.ProductAPI.Config;
 using Shopping.ProductAPI.Model.Context;
+using Shopping.ProductAPI.Repository;
+using Shopping.ProductAPI.Repository.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +17,16 @@ builder.Services.AddDbContext<MySQLContext>(options => options.
                 UseMySql(connection, 
                         new MySqlServerVersion(
                             new Version(8, 0, 29))));
+
+// mappings
+IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
+// IOC - Services
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
